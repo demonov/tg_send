@@ -26,8 +26,10 @@ async fn main() -> Result<()> {
     teloxide::repl(bot, move |bot: Bot, msg: Message| {
         let config = config.clone();
         async move {
-            handle_message(bot, msg, config).await?;
-            Ok(())
+            if let Err(e) = handle_message(bot, msg, config).await {
+                log::error!("Error handling message: {}", e);
+            }
+            respond(())
         }
     })
     .await;
